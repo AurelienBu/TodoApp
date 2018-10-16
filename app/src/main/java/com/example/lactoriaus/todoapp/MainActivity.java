@@ -9,6 +9,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -193,6 +195,7 @@ public class MainActivity extends AppCompatActivity {
     private NotificationManager notifManager;
     public void createNotification(String aMessage, Context context) {
         final int NOTIFY_ID = 0; // ID of notification
+        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         String id = "default_channel_id";
         String title = "Default Channel";
         Intent intent;
@@ -222,7 +225,8 @@ public class MainActivity extends AppCompatActivity {
                     .setAutoCancel(true)
                     .setContentIntent(pendingIntent)
                     .setTicker(aMessage)
-                    .setVibrate(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+                    .setVibrate(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400})
+                    .setSound(alarmSound);
         }
         else {
             builder = new NotificationCompat.Builder(context, id);
@@ -238,6 +242,7 @@ public class MainActivity extends AppCompatActivity {
                     .setContentIntent(pendingIntent)
                     .setTicker(aMessage)
                     .setVibrate(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400})
+                    .setSound(alarmSound)
                     .setPriority(Notification.PRIORITY_HIGH);
         }
         Notification notification = builder.build();
