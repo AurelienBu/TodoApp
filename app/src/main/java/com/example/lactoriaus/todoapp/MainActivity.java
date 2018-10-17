@@ -1,5 +1,6 @@
 package com.example.lactoriaus.todoapp;
 
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -13,6 +14,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.NotificationCompat;
@@ -26,6 +28,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import java.util.Calendar;
 
 import org.apache.commons.io.FileUtils;
 
@@ -37,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<String> items;
     private ArrayAdapter<String> itemsAdapter;
     private ListView lvItems;
+    public static String notificationMsg;
 
 
     @Override
@@ -72,8 +76,12 @@ public class MainActivity extends AppCompatActivity {
                                 String task = String.valueOf(textEditText.getText());
                                 itemsAdapter.add(task);
                                 writeItems();
-                                createNotification("Task to do: " +
-                                         task, MainActivity.this);
+
+                                //createNotification("Task to do: " +
+                                //         task, MainActivity.this);
+                                startAlarm("Task to do: " +
+                                                 task, false);
+
                             }
                         })
                         .setNegativeButton("Cancel",null)
@@ -192,62 +200,32 @@ public class MainActivity extends AppCompatActivity {
         getDelegate().onDestroy();
 
     }
-    private NotificationManager notifManager;
-    public void createNotification(String aMessage, Context context) {
-        final int NOTIFY_ID = 0; // ID of notification
-        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        String id = "default_channel_id";
-        String title = "Default Channel";
-        Intent intent;
+
+    private void startAlarm(String msg, boolean isRepeat) {
+        AlarmManager manager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        Intent myIntent;
         PendingIntent pendingIntent;
-        NotificationCompat.Builder builder;
-        if (notifManager == null) {
-            notifManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            int importance = NotificationManager.IMPORTANCE_HIGH;
-            NotificationChannel mChannel = notifManager.getNotificationChannel(id);
-            if (mChannel == null) {
-                mChannel = new NotificationChannel(id, title, importance);
-                mChannel.enableVibration(true);
-                mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
-                notifManager.createNotificationChannel(mChannel);
-            }
-            builder = new NotificationCompat.Builder(context, id);
-            intent = new Intent(context, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
-            builder.setContentTitle(aMessage)                            // required
-                    .setSmallIcon(R.drawable.ic_stat_name)   // required
-                    .setColor(Color.GREEN)
-                    .setContentText(context.getString(R.string.app_name)) // required
-                    .setDefaults(Notification.DEFAULT_ALL)
-                    .setAutoCancel(true)
-                    .setContentIntent(pendingIntent)
-                    .setTicker(aMessage)
-                    .setVibrate(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400})
-                    .setSound(alarmSound);
-        }
-        else {
-            builder = new NotificationCompat.Builder(context, id);
-            intent = new Intent(context, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
-            builder.setContentTitle(aMessage)                            // required
-                    .setSmallIcon(R.drawable.ic_stat_name)   // required
-                    .setColor(Color.GREEN)
-                    .setContentText(context.getString(R.string.app_name)) // required
-                    .setDefaults(Notification.DEFAULT_ALL)
-                    .setAutoCancel(true)
-                    .setContentIntent(pendingIntent)
-                    .setTicker(aMessage)
-                    .setVibrate(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400})
-                    .setSound(alarmSound)
-                    .setPriority(Notification.PRIORITY_HIGH);
-        }
-        Notification notification = builder.build();
-        notifManager.notify(NOTIFY_ID, notification);
+        Calendar calendar= Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY,11);
+        calendar.set(Calendar.MINUTE,38);
+        calendar.set(Calendar.SECOND,0);
+
+
+        notificationMsg = msg;
+
+
+        myIntent = new Intent(MainActivity.this,AlarmNotificationReceiver.class);
+        pendingIntent = PendingIntent.getBroadcast(this,0,myIntent,0);
+
+
+        if(!isRepeat)
+            manager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),pendingIntent);
+        else
+            manager.setRepeating(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis(),
+                                 AlarmManager.INTERVAL_DAY,pendingIntent);
     }
+
+
 
 
 }
