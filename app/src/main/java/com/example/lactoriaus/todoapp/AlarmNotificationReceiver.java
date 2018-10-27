@@ -17,7 +17,7 @@ import android.support.v4.app.NotificationCompat;
 
 public class AlarmNotificationReceiver extends BroadcastReceiver {
     private NotificationManager notifManager;
-    private String notificationMessage = MainActivity.notificationMsg;
+    private String notificationMessage = TaskSetting.notificationMsg;
     @Override
     public void onReceive(Context context, Intent intent) {
 

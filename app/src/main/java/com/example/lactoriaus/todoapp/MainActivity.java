@@ -26,8 +26,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TimePicker;
+
 import java.util.Calendar;
 
 import org.apache.commons.io.FileUtils;
@@ -40,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<String> items;
     private ArrayAdapter<String> itemsAdapter;
     private ListView lvItems;
-    public static String notificationMsg;
+    public static final String ITEM = "";
 
 
     @Override
@@ -79,8 +82,6 @@ public class MainActivity extends AppCompatActivity {
 
                                 //createNotification("Task to do: " +
                                 //         task, MainActivity.this);
-                                startAlarm("Task to do: " +
-                                                 task, false);
 
                             }
                         })
@@ -120,9 +121,28 @@ public class MainActivity extends AppCompatActivity {
                                                    View item, final int pos, long id) {
 
                         AlertDialog dialogDelete = new AlertDialog.Builder(MainActivity.this)
-                                .setTitle("Are you sure you want to delete this " + lvItems.getItemAtPosition(pos).toString() + "?")
+                                .setTitle("What do you want to do? " + lvItems.getItemAtPosition(pos).toString() + "?")
 
-                                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                                .setPositiveButton("Settings", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                        launchTaskSettings(pos);
+
+
+
+
+
+                                                /*startAlarm("Task to do: " +
+                                                        items.get(pos), false,
+                                                        timePicker.getHour(),
+                                                        timePicker.getMinute());
+                                                R.layout.task_setting.this.finish();*/
+
+
+                                    }
+                                })
+                                .setNegativeButton("Delete", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         // Remove the item within array at position
@@ -133,7 +153,6 @@ public class MainActivity extends AppCompatActivity {
                                         //writeItems();
                                     }
                                 })
-                                .setNegativeButton("Cancel",null)
                                 .create();
                         dialogDelete.show();
 
@@ -201,29 +220,14 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void startAlarm(String msg, boolean isRepeat) {
-        AlarmManager manager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-        Intent myIntent;
-        PendingIntent pendingIntent;
-        Calendar calendar= Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY,11);
-        calendar.set(Calendar.MINUTE,38);
-        calendar.set(Calendar.SECOND,0);
+    private void launchTaskSettings(int pos){
+        Intent intent2 = new Intent(this, TaskSetting.class);
+        intent2.putExtra(ITEM, items.get(pos));
+        startActivity(intent2);
 
-
-        notificationMsg = msg;
-
-
-        myIntent = new Intent(MainActivity.this,AlarmNotificationReceiver.class);
-        pendingIntent = PendingIntent.getBroadcast(this,0,myIntent,0);
-
-
-        if(!isRepeat)
-            manager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),pendingIntent);
-        else
-            manager.setRepeating(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis(),
-                                 AlarmManager.INTERVAL_DAY,pendingIntent);
     }
+
+
 
 
 
