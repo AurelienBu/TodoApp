@@ -6,17 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TimePicker
-        android:id="@+id/timePicker"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/check_monday"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <Button
         android:id="@+id/btn_OK"
         android:layout_width="wrap_content"
@@ -30,15 +19,106 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <CheckBox
-        android:id="@+id/check_monday"
+        android:id="@+id/btn_sunday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="S"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@+id/btn_Monday"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/timeTV" />
+
+    <CheckBox
+        android:id="@+id/btn_Monday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:text="M"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@+id/btn_tuesday"
+        app:layout_constraintTop_toBottomOf="@+id/timeTV" />
+
+    <CheckBox
+        android:id="@+id/btn_tuesday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="12dp"
+        android:text="T"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@+id/btn_wes"
+        app:layout_constraintTop_toBottomOf="@+id/timeTV" />
+
+    <CheckBox
+        android:id="@+id/btn_wes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="4dp"
+        android:text="W"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@+id/btn_thursday"
+        app:layout_constraintTop_toBottomOf="@+id/timeTV" />
+
+    <CheckBox
+        android:id="@+id/btn_thursday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="T"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@+id/btn_friday"
+        app:layout_constraintTop_toBottomOf="@+id/timeTV" />
+
+    <CheckBox
+        android:id="@+id/btn_friday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="F"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@+id/btn_satur"
+        app:layout_constraintTop_toBottomOf="@+id/timeTV" />
+
+    <CheckBox
+        android:id="@+id/btn_satur"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="S"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/timeTV" />
+
+    <CheckBox
+        android:id="@+id/btn_rep"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="Monday"
-        app:layout_constraintBottom_toTopOf="@+id/btn_OK"
+        android:layout_marginBottom="68dp"
+        android:text="Repeat"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.027"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/timeTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="328dp"
+        android:text="Alert time 12:00pm"
+        android:textSize="30sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
