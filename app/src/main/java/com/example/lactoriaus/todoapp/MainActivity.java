@@ -1,6 +1,7 @@
 package com.example.lactoriaus.todoapp;
 
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,11 +23,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    private ArrayList<String> items;
-    private ArrayAdapter<String> itemsAdapter;
-    private ListView lvItems;
-    public static final String ITEM = "";
-
+    public  static ArrayList<String> items  = new ArrayList<String>();
+    public  static ArrayAdapter<String> itemsAdapter ;
+    public  static ListView lvItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
         // ADD HERE
         lvItems = (ListView) findViewById(R.id.lvItems);
-        items = new ArrayList<String>();
+       // items = ;
         readItems();
         itemsAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, items);
@@ -132,27 +131,8 @@ public class MainActivity extends AppCompatActivity {
                 new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, final int pos, long id) {
-                        final EditText textEditText = new EditText(MainActivity.this);
-                        AlertDialog dialogModify = new AlertDialog.Builder(MainActivity.this)
-                                .setTitle("Modification of: " + lvItems.getItemAtPosition(pos).toString() + "?")
-                                .setView(textEditText)
-                                .setPositiveButton("Modify", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        String task = String.valueOf(textEditText.getText());
-                                        // Remove the item within array at position
-
-                                        items.remove(pos);
-                                        items.add(pos, task);
-                                        // Refresh the adapter
-                                        itemsAdapter.notifyDataSetChanged();
-                                        // Return true consumes the long click event (marks it handled)
-                                        //writeItems();
-                                    }
-                                })
-                                .setNegativeButton("Cancel",null)
-                                .create();
-                        dialogModify.show();
+                        launchTaskSettings(pos);
+                        writeItems();
                     }
                 }
         );
@@ -189,8 +169,29 @@ public class MainActivity extends AppCompatActivity {
 
     private void launchTaskSettings(int pos){
         Intent intent2 = new Intent(this, TaskSetting.class);
-        intent2.putExtra(ITEM, items.get(pos));
-        startActivity(intent2);
+        Intent intent = getIntent();
+        intent2.putExtra("ITEM", items.get(pos));
+        intent2.putExtra("POS",pos);
+        startActivityForResult(intent2,1);
 
     }
+    /*--------------------------------------------------
+    Method called when get back from the setting task
+    --------------------------------------------------*/
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent)
+    {
+        super.onActivityResult(requestCode, resultCode, intent);
+        int pos = 0;
+
+        if(requestCode == 1 && resultCode == RESULT_OK)
+        {
+            String taskname = intent.getStringExtra("taskname");
+            pos = intent.getIntExtra("pos", -1);
+            items.remove(pos);
+            items.add(pos, taskname);
+            itemsAdapter.notifyDataSetChanged();
+        }
+    }
 }
+

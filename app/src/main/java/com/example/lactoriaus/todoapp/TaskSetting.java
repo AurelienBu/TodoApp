@@ -11,6 +11,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import java.util.Calendar;
@@ -18,6 +20,7 @@ import java.util.Calendar;
 
 public class TaskSetting  extends AppCompatActivity {
     public static String notificationMsg;
+    private int pos;
 
     private Calendar mCalendar = Calendar.getInstance();
     private Activity mActivity;
@@ -41,13 +44,15 @@ public class TaskSetting  extends AppCompatActivity {
         final CheckBox btn_thur = findViewById(R.id.btn_thursday);
         final CheckBox btn_fri = findViewById(R.id.btn_friday);
         final CheckBox btn_sat = findViewById(R.id.btn_satur);
-       // final TimePicker timePicker = findViewById(R.id.timePicker);
+        final Switch sw_notif = findViewById(R.id.sw_notif);
+
         Intent intent = getIntent();
-        notificationMsg = intent.getStringExtra(MainActivity.ITEM);
+        notificationMsg = intent.getStringExtra("ITEM");
+        pos = intent.getIntExtra("POS", -1);
 
         final TextView chooseTime = findViewById(R.id.timeTV);
-
-
+        final EditText et_taskname = findViewById(R.id.et_taskname);
+        et_taskname.setText(MainActivity.lvItems.getItemAtPosition(pos).toString());
 
         chb_rep.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -86,19 +91,19 @@ public class TaskSetting  extends AppCompatActivity {
 
         btn_OK.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
-
-
-
-
-               startAlarm("Task to do: " +
+                if(sw_notif.isChecked()){
+                    startAlarm("Task to do: " +
                                 notificationMsg, false,
-                        notifHour,
-                        notifMinute);
-                returnMain();
+                                notifHour,
+                                notifMinute);
+                }
+                Intent intent = new Intent();
+                intent.putExtra("taskname", et_taskname.getText().toString());
+                intent.putExtra("pos", pos);
+
+                setResult(RESULT_OK, intent);
+                finish(); //returnMain();
             }
-
-
         });
 
 
@@ -127,12 +132,6 @@ public class TaskSetting  extends AppCompatActivity {
                 timePickerDialog.show();
             }
         });
-    }
-    private void returnMain(){
-        Intent returnToMain = new Intent(this, MainActivity.class);
-        startActivity(returnToMain);
-        finish();
-
     }
 
     private void startAlarm(String msg, boolean isRepeat,int hour, int minute ) {
