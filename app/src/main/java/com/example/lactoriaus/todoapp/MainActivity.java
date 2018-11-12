@@ -1,7 +1,5 @@
 package com.example.lactoriaus.todoapp;
 
-
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -124,8 +122,6 @@ public class MainActivity extends AppCompatActivity {
 
                         return true;
                     }
-
-
                 });
         lvItems.setOnItemClickListener(
                 new AdapterView.OnItemClickListener() {
