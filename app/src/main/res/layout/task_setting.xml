@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -147,5 +146,51 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.127"
         app:layout_constraintStart_toEndOf="@+id/timeTV" />
+
+    <FrameLayout
+        android:layout_width="374dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/timeTV"
+        tools:layout_editor_absoluteX="3dp">
+
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RadioButton
+                android:id="@+id/radioButton1"
+                android:layout_width="141dp"
+                android:layout_height="75dp"
+                android:layout_weight="1"
+                android:buttonTint="@android:color/holo_red_dark"
+                android:checked="true"
+                android:onClick="onPrioritySelected"
+                android:text="High Priority" />
+
+            <RadioButton
+                android:id="@+id/radioButton2"
+                android:layout_width="143dp"
+                android:layout_height="72dp"
+                android:layout_weight="1"
+                android:buttonTint="@android:color/holo_orange_dark"
+                android:checked="false"
+                android:onClick="onPrioritySelected"
+                android:text="Medium Priority" />
+
+            <RadioButton
+                android:id="@+id/radioButton3"
+                android:layout_width="143dp"
+                android:layout_height="69dp"
+                android:layout_weight="1"
+                android:buttonTint="@android:color/holo_orange_light"
+                android:checked="false"
+                android:onClick="onPrioritySelected"
+                android:text="Low Priority" />
+
+        </RadioGroup>
+    </FrameLayout>
+
 
 </android.support.constraint.ConstraintLayout>

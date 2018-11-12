@@ -6,12 +6,15 @@ import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -28,13 +31,23 @@ public class TaskSetting  extends AppCompatActivity {
     private int notifMinute;
     private String ampm="AM";
 
+    private int mPriority;
+    RadioGroup rg;
+    RadioButton rb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
+
         setContentView(R.layout.task_setting);
         mActivity = this;
+
+        //Initialize priority to HIGH
+        //((RadioButton) findViewById(R.id.radioButton1)).setChecked(true);
+        mPriority = 1;
+
         Button btn_OK = findViewById(R.id.btn_OK);
         final CheckBox chb_rep = findViewById(R.id.btn_rep);
         final CheckBox btn_sun = findViewById(R.id.btn_sunday);
@@ -100,8 +113,11 @@ public class TaskSetting  extends AppCompatActivity {
                 Intent intent = new Intent();
                 intent.putExtra("taskname", et_taskname.getText().toString());
                 intent.putExtra("pos", pos);
+                intent.putExtra("Priority", mPriority);
+
 
                 setResult(RESULT_OK, intent);
+
                 finish(); //returnMain();
             }
         });
@@ -161,6 +177,19 @@ public class TaskSetting  extends AppCompatActivity {
     }
 
 
+
+    public void onPrioritySelected(View view) {
+
+
+        if (((RadioButton) findViewById(R.id.radioButton1)).isChecked()) {
+            mPriority = 1;
+
+        } else if (((RadioButton) findViewById(R.id.radioButton2)).isChecked()) {
+            mPriority = 2;
+        } else if (((RadioButton) findViewById(R.id.radioButton3)).isChecked()) {
+            mPriority = 3;
+        }
+    }
 
 
 }

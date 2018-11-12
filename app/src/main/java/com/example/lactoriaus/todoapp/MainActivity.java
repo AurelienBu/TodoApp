@@ -4,11 +4,17 @@ package com.example.lactoriaus.todoapp;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.renderscript.RenderScript;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -183,14 +189,44 @@ public class MainActivity extends AppCompatActivity {
     {
         super.onActivityResult(requestCode, resultCode, intent);
         int pos = 0;
+        int priority = 1;
+       // SpannableStringBuilder builder =  new SpannableStringBuilder();
+
 
         if(requestCode == 1 && resultCode == RESULT_OK)
         {
+
             String taskname = intent.getStringExtra("taskname");
             pos = intent.getIntExtra("pos", -1);
-            items.remove(pos);
-            items.add(pos, taskname);
-            itemsAdapter.notifyDataSetChanged();
+            priority = intent.getIntExtra("Priority", 1);
+
+            if(priority == 1)
+            {
+
+                items.remove(pos);
+
+               // SpannableString redTask = new SpannableString(taskname);
+                //redTask.setSpan(new ForegroundColorSpan(Color.RED), 0, taskname.length(), 0);
+               // builder.append(redTask);
+
+                items.add(pos, taskname + " High");
+
+                itemsAdapter.notifyDataSetChanged();
+
+            }
+            else if( priority == 2)
+            {
+                items.remove(pos);
+                items.add(pos, taskname + " Medium");
+                itemsAdapter.notifyDataSetChanged();
+            }
+
+            else if( priority == 3)
+            {
+                items.remove(pos);
+                items.add(pos, taskname + " Low");
+                itemsAdapter.notifyDataSetChanged();
+            }
         }
     }
 }
