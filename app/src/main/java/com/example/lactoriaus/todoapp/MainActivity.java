@@ -23,10 +23,14 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import org.apache.commons.io.FileUtils;
+import android.widget.TextView;
+import android.view.ViewGroup;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     public  static ArrayList<String> items  = new ArrayList<String>();
@@ -190,6 +194,7 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, intent);
         int pos = 0;
         int priority = 1;
+        int priorityColor = 0;
        // SpannableStringBuilder builder =  new SpannableStringBuilder();
 
 
@@ -200,34 +205,36 @@ public class MainActivity extends AppCompatActivity {
             pos = intent.getIntExtra("pos", -1);
             priority = intent.getIntExtra("Priority", 1);
 
+            //HIGH PRIORITY
             if(priority == 1)
             {
-
                 items.remove(pos);
-
-               // SpannableString redTask = new SpannableString(taskname);
-                //redTask.setSpan(new ForegroundColorSpan(Color.RED), 0, taskname.length(), 0);
-               // builder.append(redTask);
-
-                items.add(pos, taskname + " High");
-
+                items.add(pos, "taskname");
+                priorityColor = Color.RED;
                 itemsAdapter.notifyDataSetChanged();
 
             }
+            //MEDIUM PRIORITY
             else if( priority == 2)
             {
                 items.remove(pos);
-                items.add(pos, taskname + " Medium");
+                items.add(pos, "taskname");
+                priorityColor = Color.rgb(255,165,0);
                 itemsAdapter.notifyDataSetChanged();
             }
 
+            //LOW PRIORITY
             else if( priority == 3)
             {
                 items.remove(pos);
-                items.add(pos, taskname + " Low");
+                items.add(pos, "taskname");
+                priorityColor = Color.YELLOW;
                 itemsAdapter.notifyDataSetChanged();
             }
+            lvItems.getChildAt(pos).setBackgroundColor(priorityColor);
+
         }
     }
+
 }
 
