@@ -118,7 +118,53 @@ public class TaskSetting  extends AppCompatActivity implements AdapterView.OnIte
                     startAlarm("Task to do: " +
                                 notificationMsg, false,
                                 notifHour,
-                                notifMinute);
+                                notifMinute, 0);
+
+                    // Create notification for each days
+                    if(chb_rep.isChecked()) {
+                        if (btn_mon.isChecked()){
+                            startAlarm("Task to do: " + notificationMsg,
+                                    true,
+                                    notifHour,
+                                    notifMinute, Calendar.MONDAY);
+                        }
+                        if (btn_tue.isChecked()){
+                            startAlarm("Task to do: " + notificationMsg,
+                                    true,
+                                    notifHour,
+                                    notifMinute, Calendar.TUESDAY);
+                        }
+                        if (btn_wed.isChecked()){
+                            startAlarm("Task to do: " + notificationMsg,
+                                    true,
+                                    notifHour,
+                                    notifMinute, Calendar.WEDNESDAY);
+                        }
+                        if (btn_thur.isChecked()){
+                            startAlarm("Task to do: " + notificationMsg,
+                                    true,
+                                    notifHour,
+                                    notifMinute, Calendar.THURSDAY);
+                        }
+                        if (btn_fri.isChecked()){
+                            startAlarm("Task to do: " + notificationMsg,
+                                    true,
+                                    notifHour,
+                                    notifMinute, Calendar.FRIDAY);
+                        }
+                        if (btn_sat.isChecked()){
+                            startAlarm("Task to do: " + notificationMsg,
+                                    true,
+                                    notifHour,
+                                    notifMinute, Calendar.SATURDAY);
+                        }
+                        if (btn_sun.isChecked()){
+                            startAlarm("Task to do: " + notificationMsg,
+                                    true,
+                                    notifHour,
+                                    notifMinute, Calendar.SUNDAY);
+                        }
+                    }
                 }
                 Intent intent = new Intent();
                 intent.putExtra("taskname", et_taskname.getText().toString());
@@ -160,7 +206,7 @@ public class TaskSetting  extends AppCompatActivity implements AdapterView.OnIte
         });
     }
 
-    private void startAlarm(String msg, boolean isRepeat,int hour, int minute ) {
+    private void startAlarm(String msg, boolean isRepeat,int hour, int minute, int dayOfWeek ) {
         AlarmManager manager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
         Intent myIntent;
         PendingIntent pendingIntent;
@@ -168,7 +214,8 @@ public class TaskSetting  extends AppCompatActivity implements AdapterView.OnIte
         calendar.set(Calendar.HOUR_OF_DAY,hour);
         calendar.set(Calendar.MINUTE,minute);
         calendar.set(Calendar.SECOND,0);
-        calendar.set(Calendar.DAY_OF_WEEK, 1);
+        if(isRepeat)
+            calendar.set(Calendar.DAY_OF_WEEK, dayOfWeek);
 
 
 
@@ -182,8 +229,7 @@ public class TaskSetting  extends AppCompatActivity implements AdapterView.OnIte
         if(!isRepeat)
             manager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),pendingIntent);
         else
-            manager.setRepeating(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis(),
-                    AlarmManager.INTERVAL_DAY,pendingIntent);
+            manager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
     }
 
 
