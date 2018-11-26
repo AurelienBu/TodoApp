@@ -205,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
             if(priority == 1)
             {
                 items.remove(pos);
-                items.add(pos, "taskname");
+                items.add(pos, taskname);
                 priorityColor = Color.RED;
                 itemsAdapter.notifyDataSetChanged();
 
@@ -214,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
             else if( priority == 2)
             {
                 items.remove(pos);
-                items.add(pos, "taskname");
+                items.add(pos, taskname);
                 priorityColor = Color.rgb(255,165,0);
                 itemsAdapter.notifyDataSetChanged();
             }
@@ -223,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
             else if( priority == 3)
             {
                 items.remove(pos);
-                items.add(pos, "taskname");
+                items.add(pos, taskname);
                 priorityColor = Color.YELLOW;
                 itemsAdapter.notifyDataSetChanged();
             }
