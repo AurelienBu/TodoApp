@@ -2,6 +2,7 @@ package com.example.lactoriaus.todoapp;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.renderscript.RenderScript;
@@ -21,11 +22,18 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import org.apache.commons.io.FileUtils;
+
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -34,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
     public  static ArrayList<String> items  = new ArrayList<String>();
     public  static ArrayAdapter<String> itemsAdapter ;
     public  static ListView lvItems;
+    ProgressBar xp;
+    public int exp = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,15 +54,14 @@ public class MainActivity extends AppCompatActivity {
         lvItems = (ListView) findViewById(R.id.lvItems);
        // items = ;
         readItems();
+
         itemsAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, items);
         lvItems.setAdapter(itemsAdapter);
-
+        xp = (ProgressBar)findViewById(R.id.xp);
         setupListViewListener();
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,6 +130,8 @@ public class MainActivity extends AppCompatActivity {
                                     public void onClick(DialogInterface dialog, int which) {
                                         // Remove the item within array at position
                                         items.remove(pos);
+                                        exp+=10;
+                                        xp.setProgress(exp);
                                         // Refresh the adapter
                                         itemsAdapter.notifyDataSetChanged();
                                         // Return true consumes the long click event (marks it handled)
@@ -152,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
             items = new ArrayList<String>();
         }
 
+
     }
 
     private void writeItems() {
@@ -162,8 +174,9 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
+
+
     @Override
     public void onDestroy() {
 
@@ -191,8 +204,6 @@ public class MainActivity extends AppCompatActivity {
         int pos = 0;
         int priority = 1;
         int priorityColor = 0;
-       // SpannableStringBuilder builder =  new SpannableStringBuilder();
-
 
         if(requestCode == 1 && resultCode == RESULT_OK)
         {
@@ -200,6 +211,7 @@ public class MainActivity extends AppCompatActivity {
             String taskname = intent.getStringExtra("taskname");
             pos = intent.getIntExtra("pos", -1);
             priority = intent.getIntExtra("Priority", 1);
+
 
             //HIGH PRIORITY
             if(priority == 1)
@@ -217,6 +229,7 @@ public class MainActivity extends AppCompatActivity {
                 items.add(pos, taskname);
                 priorityColor = Color.rgb(255,165,0);
                 itemsAdapter.notifyDataSetChanged();
+
             }
 
             //LOW PRIORITY
@@ -226,11 +239,13 @@ public class MainActivity extends AppCompatActivity {
                 items.add(pos, taskname);
                 priorityColor = Color.YELLOW;
                 itemsAdapter.notifyDataSetChanged();
-            }
-            lvItems.getChildAt(pos).setBackgroundColor(priorityColor);
 
+            }
+
+            lvItems.getChildAt(pos).setBackgroundColor(priorityColor);
         }
     }
+
 
 }
 
