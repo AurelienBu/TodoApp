@@ -1,24 +1,19 @@
 package com.example.lactoriaus.todoapp;
 
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
+import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
+import android.renderscript.RenderScript;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,45 +21,53 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
-
 import org.apache.commons.io.FileUtils;
+
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.view.ViewGroup;
+import android.widget.Toast;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    private ArrayList<String> items;
-    private ArrayAdapter<String> itemsAdapter;
-    private ListView lvItems;
-
+    public  static ArrayList<String> items  = new ArrayList<String>();
+    public  static ArrayAdapter<String> itemsAdapter ;
+    public  static ListView lvItems;
+    public Progress progr = new Progress();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // ADD HERE
         lvItems = (ListView) findViewById(R.id.lvItems);
-        items = new ArrayList<String>();
+        // Restore the saved list
         readItems();
+
         itemsAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, items);
         lvItems.setAdapter(itemsAdapter);
 
         setupListViewListener();
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        /** Called when the button "+" is pressed **/
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 final EditText textEditText = new EditText(MainActivity.this);
                 AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
                         .setTitle("Add New Task")
-                        .setMessage("What task you want to do?")
+                        .setMessage("What task do you want to do?")
                         .setView(textEditText)
                         .setPositiveButton("Add", new DialogInterface.OnClickListener() {
                             @Override
@@ -72,17 +75,21 @@ public class MainActivity extends AppCompatActivity {
                                 String task = String.valueOf(textEditText.getText());
                                 itemsAdapter.add(task);
                                 writeItems();
-                                createNotification("Task to do: " +
-                                         task, MainActivity.this);
                             }
                         })
                         .setNegativeButton("Cancel",null)
                         .create();
                 dialog.show();
+
             }
         });
     }
 
+    /**
+     * Creation of the Menu option
+     * @param menu
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -90,6 +97,11 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Method called when the menu button is pressed
+     * @param item Name of the sub-menu wanted
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -101,68 +113,71 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         }
+        if (id == R.id.action_progress){
+            launchProgress();
+            return true;
+
+        }
 
         return super.onOptionsItemSelected(item);
     }
+
+    /**
+     * Method to iteract with the List View
+     */
     private void setupListViewListener() {
         lvItems.setOnItemLongClickListener(
                 new AdapterView.OnItemLongClickListener() {
                     @Override
+                    /* Called When long press on a item */
                     public boolean onItemLongClick(AdapterView<?> adapter,
                                                    View item, final int pos, long id) {
 
                         AlertDialog dialogDelete = new AlertDialog.Builder(MainActivity.this)
-                                .setTitle("Are you sure you want to delete this " + lvItems.getItemAtPosition(pos).toString() + "?")
+                                .setTitle("What do you want to do? " + lvItems.getItemAtPosition(pos).toString() + "?")
+                                .setPositiveButton("Done!", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
 
-                                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                                        items.remove(pos);
+                                        // Increase progress
+                                        progr.increaseProgress();
+                                        // Refresh the adapter
+                                        itemsAdapter.notifyDataSetChanged();
+                                        // Return true consumes the long click event (marks it handled)
+                                    }
+                                })
+                                .setNegativeButton("Drop it!", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         // Remove the item within array at position
                                         items.remove(pos);
+                                        //Decrease progress
+                                        progr.decreaseProgress();
                                         // Refresh the adapter
                                         itemsAdapter.notifyDataSetChanged();
-                                        // Return true consumes the long click event (marks it handled)
-                                        //writeItems();
                                     }
                                 })
-                                .setNegativeButton("Cancel",null)
                                 .create();
                         dialogDelete.show();
-
                         return true;
                     }
-
-
                 });
+        /** Called when a item is pressed **/
         lvItems.setOnItemClickListener(
                 new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, final int pos, long id) {
-                        final EditText textEditText = new EditText(MainActivity.this);
-                        AlertDialog dialogModify = new AlertDialog.Builder(MainActivity.this)
-                                .setTitle("Modification of: " + lvItems.getItemAtPosition(pos).toString() + "?")
-                                .setView(textEditText)
-                                .setPositiveButton("Modify", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        String task = String.valueOf(textEditText.getText());
-                                        // Remove the item within array at position
-
-                                        items.remove(pos);
-                                        items.add(pos, task);
-                                        // Refresh the adapter
-                                        itemsAdapter.notifyDataSetChanged();
-                                        // Return true consumes the long click event (marks it handled)
-                                        //writeItems();
-                                    }
-                                })
-                                .setNegativeButton("Cancel",null)
-                                .create();
-                        dialogModify.show();
+                        // Open settings layout
+                        launchTaskSettings(pos);
+                        writeItems();
                     }
                 }
         );
     }
+    /**
+     * Method to read the task list in a text file
+     */
     private void readItems() {
         File filesDir = getFilesDir();
         File todoFile = new File(filesDir, "TodoListSave.txt");
@@ -171,9 +186,11 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             items = new ArrayList<String>();
         }
-
     }
 
+    /**
+     * Method to write the task list in a text file
+     */
     private void writeItems() {
         File filesDir = getFilesDir();
         File todoFile = new File(filesDir, "TodoListSave.txt");
@@ -182,72 +199,89 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
+
+
     @Override
     public void onDestroy() {
-
         super.onDestroy();
         writeItems();
         getDelegate().onDestroy();
+    }
+
+    /**
+     * Start the task setting activity
+     * @param pos position of the selectem task
+     */
+    private void launchTaskSettings(int pos){
+        Intent intent2 = new Intent(this, TaskSetting.class);
+        Intent intent = getIntent();
+        // Gives data to the other class
+        intent2.putExtra("ITEM", items.get(pos));
+        intent2.putExtra("POS",pos);
+        startActivityForResult(intent2,1);
 
     }
-    private NotificationManager notifManager;
-    public void createNotification(String aMessage, Context context) {
-        final int NOTIFY_ID = 0; // ID of notification
-        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        String id = "default_channel_id";
-        String title = "Default Channel";
-        Intent intent;
-        PendingIntent pendingIntent;
-        NotificationCompat.Builder builder;
-        if (notifManager == null) {
-            notifManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            int importance = NotificationManager.IMPORTANCE_HIGH;
-            NotificationChannel mChannel = notifManager.getNotificationChannel(id);
-            if (mChannel == null) {
-                mChannel = new NotificationChannel(id, title, importance);
-                mChannel.enableVibration(true);
-                mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
-                notifManager.createNotificationChannel(mChannel);
+
+    /**
+     * Start the progress layout
+     */
+    private void launchProgress(){
+        Intent intent2 = new Intent(this, Progress.class);
+        startActivityForResult(intent2,1);
+
+    }
+
+    /**
+     * Method called when get back from the setting task
+     * @param requestCode
+     * @param resultCode
+     * @param intent
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent)
+    {
+        super.onActivityResult(requestCode, resultCode, intent);
+        int pos = 0;
+        int priority = 1;
+        int priorityColor = 0;
+
+        if(requestCode == 1 && resultCode == RESULT_OK)
+        {
+            String taskname = intent.getStringExtra("taskname");
+            pos = intent.getIntExtra("pos", -1);
+            priority = intent.getIntExtra("Priority", 1);
+
+            //HIGH PRIORITY
+            if(priority == 1)
+            {
+                items.remove(pos);
+                items.add(pos, taskname);
+                priorityColor = Color.RED;
+                itemsAdapter.notifyDataSetChanged();
             }
-            builder = new NotificationCompat.Builder(context, id);
-            intent = new Intent(context, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
-            builder.setContentTitle(aMessage)                            // required
-                    .setSmallIcon(R.drawable.ic_stat_name)   // required
-                    .setColor(Color.GREEN)
-                    .setContentText(context.getString(R.string.app_name)) // required
-                    .setDefaults(Notification.DEFAULT_ALL)
-                    .setAutoCancel(true)
-                    .setContentIntent(pendingIntent)
-                    .setTicker(aMessage)
-                    .setVibrate(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400})
-                    .setSound(alarmSound);
+            //MEDIUM PRIORITY
+            else if( priority == 2)
+            {
+                items.remove(pos);
+                items.add(pos, taskname);
+                priorityColor = Color.rgb(255,165,0);
+                itemsAdapter.notifyDataSetChanged();
+            }
+
+            //LOW PRIORITY
+            else if( priority == 3)
+            {
+                items.remove(pos);
+                items.add(pos, taskname);
+                priorityColor = Color.YELLOW;
+                itemsAdapter.notifyDataSetChanged();
+            }
+
+            lvItems.getChildAt(pos).setBackgroundColor(priorityColor);
         }
-        else {
-            builder = new NotificationCompat.Builder(context, id);
-            intent = new Intent(context, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
-            builder.setContentTitle(aMessage)                            // required
-                    .setSmallIcon(R.drawable.ic_stat_name)   // required
-                    .setColor(Color.GREEN)
-                    .setContentText(context.getString(R.string.app_name)) // required
-                    .setDefaults(Notification.DEFAULT_ALL)
-                    .setAutoCancel(true)
-                    .setContentIntent(pendingIntent)
-                    .setTicker(aMessage)
-                    .setVibrate(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400})
-                    .setSound(alarmSound)
-                    .setPriority(Notification.PRIORITY_HIGH);
-        }
-        Notification notification = builder.build();
-        notifManager.notify(NOTIFY_ID, notification);
     }
 
 
 }
+

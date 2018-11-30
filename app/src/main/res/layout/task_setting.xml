@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/btn_OK"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="OK"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <CheckBox
+        android:id="@+id/btn_sunday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="S"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@+id/btn_Monday"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/timeTV" />
+
+    <CheckBox
+        android:id="@+id/btn_Monday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:text="M"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@+id/btn_tuesday"
+        app:layout_constraintTop_toBottomOf="@+id/timeTV" />
+
+    <CheckBox
+        android:id="@+id/btn_tuesday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="12dp"
+        android:text="T"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@+id/btn_wes"
+        app:layout_constraintTop_toBottomOf="@+id/timeTV" />
+
+    <CheckBox
+        android:id="@+id/btn_wes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="4dp"
+        android:text="W"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@+id/btn_thursday"
+        app:layout_constraintTop_toBottomOf="@+id/timeTV" />
+
+    <CheckBox
+        android:id="@+id/btn_thursday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="T"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@+id/btn_friday"
+        app:layout_constraintTop_toBottomOf="@+id/timeTV" />
+
+    <CheckBox
+        android:id="@+id/btn_friday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="F"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@+id/btn_satur"
+        app:layout_constraintTop_toBottomOf="@+id/timeTV" />
+
+    <CheckBox
+        android:id="@+id/btn_satur"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="S"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/timeTV" />
+
+    <CheckBox
+        android:id="@+id/btn_rep"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="68dp"
+        android:text="Repeat"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.027"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/timeTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="328dp"
+        android:text="Alert time 12:00pm"
+        android:textSize="30sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/et_taskname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="8dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Task name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.052"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Switch
+        android:id="@+id/sw_notif"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/btn_friday"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.127"
+        app:layout_constraintStart_toEndOf="@+id/timeTV" />
+
+    <Spinner
+        android:id="@+id/subCategory"
+        android:layout_width="145dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_weight="1"
+        app:layout_constraintBottom_toTopOf="@+id/frameLayout"
+        app:layout_constraintEnd_toEndOf="@+id/frameLayout" />
+
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="374dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/timeTV"
+        tools:layout_editor_absoluteX="3dp">
+
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RadioButton
+                android:id="@+id/radioButton1"
+                android:layout_width="141dp"
+                android:layout_height="75dp"
+                android:layout_weight="1"
+                android:buttonTint="@android:color/holo_red_dark"
+                android:checked="true"
+                android:onClick="onPrioritySelected"
+                android:text="High Priority" />
+
+            <RadioButton
+                android:id="@+id/radioButton2"
+                android:layout_width="143dp"
+                android:layout_height="72dp"
+                android:layout_weight="1"
+                android:buttonTint="@android:color/holo_orange_dark"
+                android:checked="false"
+                android:onClick="onPrioritySelected"
+                android:text="Medium Priority" />
+
+            <RadioButton
+                android:id="@+id/radioButton3"
+                android:layout_width="143dp"
+                android:layout_height="69dp"
+                android:layout_weight="1"
+                android:buttonTint="@android:color/holo_orange_light"
+                android:checked="false"
+                android:onClick="onPrioritySelected"
+                android:text="Low Priority" />
+
+        </RadioGroup>
+    </FrameLayout>
+
+
+</android.support.constraint.ConstraintLayout>
