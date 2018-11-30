@@ -42,8 +42,9 @@ public class MainActivity extends AppCompatActivity {
     public  static ArrayList<String> items  = new ArrayList<String>();
     public  static ArrayAdapter<String> itemsAdapter ;
     public  static ListView lvItems;
-    ProgressBar xp;
-    public int exp = 0;
+    private Progress progress;
+    static int prog = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,13 +53,14 @@ public class MainActivity extends AppCompatActivity {
 
         // ADD HERE
         lvItems = (ListView) findViewById(R.id.lvItems);
+
        // items = ;
         readItems();
 
         itemsAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, items);
         lvItems.setAdapter(itemsAdapter);
-        xp = (ProgressBar)findViewById(R.id.xp);
+
         setupListViewListener();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -105,6 +107,11 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         }
+        if (id == R.id.action_progress){
+            launchProgress();
+            return true;
+
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -118,20 +125,26 @@ public class MainActivity extends AppCompatActivity {
                         AlertDialog dialogDelete = new AlertDialog.Builder(MainActivity.this)
                                 .setTitle("What do you want to do? " + lvItems.getItemAtPosition(pos).toString() + "?")
 
-                                .setPositiveButton("Settings", new DialogInterface.OnClickListener() {
+                                .setPositiveButton("Done!", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
 
-                                        launchTaskSettings(pos);
+                                        items.remove(pos);
+                                        prog+=10;
+                                       // progress.increaseProgress();
+                                        // Refresh the adapter
+                                        itemsAdapter.notifyDataSetChanged();
+                                        // Return true consumes the long click event (marks it handled)
+                                        //writeItems();
                                     }
                                 })
-                                .setNegativeButton("Delete", new DialogInterface.OnClickListener() {
+                                .setNegativeButton("Drop it!", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         // Remove the item within array at position
                                         items.remove(pos);
-                                        exp+=10;
-                                        xp.setProgress(exp);
+                                        prog-=5;
+                                        //progress.decreaseProgress();
                                         // Refresh the adapter
                                         itemsAdapter.notifyDataSetChanged();
                                         // Return true consumes the long click event (marks it handled)
@@ -194,6 +207,14 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(intent2,1);
 
     }
+    private void launchProgress(){
+        Intent intent2 = new Intent(this, Progress.class);
+
+        intent2.putExtra("Prog",prog);
+        startActivityForResult(intent2,1);
+
+    }
+
     /*--------------------------------------------------
     Method called when get back from the setting task
     --------------------------------------------------*/
