@@ -28,29 +28,28 @@ import android.widget.Toast;
 
 public class Progress extends AppCompatActivity {
     public static ProgressBar xp;
-    private int exp;
+    private static int exp = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.progress);
         Intent intent = getIntent();
-
-        exp = intent.getIntExtra("Prog", -1);
-
         xp = (ProgressBar)findViewById(R.id.xp);
         xp.incrementProgressBy(exp);
 
     }
+    /**
+     * Method to increase the progress
+     */
     public void increaseProgress(){
-
-
-        xp.setProgress(exp);
+        exp+=10;
     }
+    /**
+     * Method to decrease the progress
+     */
     public void decreaseProgress(){
         exp-=5;
-
-        xp.setProgress(exp);
     }
 
 }

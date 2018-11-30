@@ -29,13 +29,11 @@ import java.util.Calendar;
 public class TaskSetting  extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     public static String notificationMsg;
     private int pos;
-
     private Calendar mCalendar = Calendar.getInstance();
     private Activity mActivity;
     private int notifHour;
     private int notifMinute;
     private String ampm="AM";
-
     private int mPriority;
     RadioGroup rg;
     RadioButton rb;
@@ -50,7 +48,6 @@ public class TaskSetting  extends AppCompatActivity implements AdapterView.OnIte
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
-
 
         mActivity = this;
 
@@ -77,6 +74,7 @@ public class TaskSetting  extends AppCompatActivity implements AdapterView.OnIte
         final EditText et_taskname = findViewById(R.id.et_taskname);
         et_taskname.setText(MainActivity.lvItems.getItemAtPosition(pos).toString());
 
+        /** Called when the checkbox for repeat notification is selected **/
         chb_rep.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (chb_rep.isChecked())
@@ -111,7 +109,7 @@ public class TaskSetting  extends AppCompatActivity implements AdapterView.OnIte
             }
         });
 
-
+        /** Called when the Button OK is pressed **/
         btn_OK.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if(sw_notif.isChecked()){
@@ -170,10 +168,7 @@ public class TaskSetting  extends AppCompatActivity implements AdapterView.OnIte
                 intent.putExtra("taskname", et_taskname.getText().toString());
                 intent.putExtra("pos", pos);
                 intent.putExtra("Priority", mPriority);
-
-
                 setResult(RESULT_OK, intent);
-
                 finish(); //returnMain();
             }
         });
@@ -183,7 +178,6 @@ public class TaskSetting  extends AppCompatActivity implements AdapterView.OnIte
             @Override
             public void onClick(View view) {
                 mCalendar = Calendar.getInstance();
-
 
                 TimePickerDialog timePickerDialog = new TimePickerDialog(mActivity, new TimePickerDialog.OnTimeSetListener() {
                     @Override
@@ -206,6 +200,14 @@ public class TaskSetting  extends AppCompatActivity implements AdapterView.OnIte
         });
     }
 
+    /**
+     * method to initiliaze the alarm
+     * @param msg Message to display in the notification
+     * @param isRepeat Flag to say if it need tobe repeated
+     * @param hour hour of the notification
+     * @param minute Minute of the notification
+     * @param dayOfWeek Day of for repeating notification
+     */
     private void startAlarm(String msg, boolean isRepeat,int hour, int minute, int dayOfWeek ) {
         AlarmManager manager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
         Intent myIntent;
@@ -217,14 +219,9 @@ public class TaskSetting  extends AppCompatActivity implements AdapterView.OnIte
         if(isRepeat)
             calendar.set(Calendar.DAY_OF_WEEK, dayOfWeek);
 
-
-
-       // myIntent = new Intent(MainActivity.this,AlarmNotificationReceiver.class);
         myIntent = new Intent(TaskSetting.this,AlarmNotificationReceiver.class);
         pendingIntent = PendingIntent.getBroadcast(this,0,myIntent,0);
         myIntent.putExtra(msg, msg);
-
-
 
         if(!isRepeat)
             manager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),pendingIntent);
@@ -233,13 +230,12 @@ public class TaskSetting  extends AppCompatActivity implements AdapterView.OnIte
     }
 
 
-
+    /** Called when the on of the radio button is checked **/
     public void onPrioritySelected(View view) {
 
 
         if (((RadioButton) findViewById(R.id.radioButton1)).isChecked()) {
             mPriority = 1;
-
         } else if (((RadioButton) findViewById(R.id.radioButton2)).isChecked()) {
             mPriority = 2;
         } else if (((RadioButton) findViewById(R.id.radioButton3)).isChecked()) {

@@ -42,19 +42,14 @@ public class MainActivity extends AppCompatActivity {
     public  static ArrayList<String> items  = new ArrayList<String>();
     public  static ArrayAdapter<String> itemsAdapter ;
     public  static ListView lvItems;
-    private Progress progress;
-    static int prog = 0;
-
+    public Progress progr = new Progress();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // ADD HERE
         lvItems = (ListView) findViewById(R.id.lvItems);
-
-       // items = ;
+        // Restore the saved list
         readItems();
 
         itemsAdapter = new ArrayAdapter<String>(this,
@@ -65,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        /** Called when the button "+" is pressed **/
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -89,6 +85,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Creation of the Menu option
+     * @param menu
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -96,6 +97,11 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Method called when the menu button is pressed
+     * @param item Name of the sub-menu wanted
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -115,27 +121,30 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    /**
+     * Method to iteract with the List View
+     */
     private void setupListViewListener() {
         lvItems.setOnItemLongClickListener(
                 new AdapterView.OnItemLongClickListener() {
                     @Override
+                    /* Called When long press on a item */
                     public boolean onItemLongClick(AdapterView<?> adapter,
                                                    View item, final int pos, long id) {
 
                         AlertDialog dialogDelete = new AlertDialog.Builder(MainActivity.this)
                                 .setTitle("What do you want to do? " + lvItems.getItemAtPosition(pos).toString() + "?")
-
                                 .setPositiveButton("Done!", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
 
                                         items.remove(pos);
-                                        prog+=10;
-                                       // progress.increaseProgress();
+                                        // Increase progress
+                                        progr.increaseProgress();
                                         // Refresh the adapter
                                         itemsAdapter.notifyDataSetChanged();
                                         // Return true consumes the long click event (marks it handled)
-                                        //writeItems();
                                     }
                                 })
                                 .setNegativeButton("Drop it!", new DialogInterface.OnClickListener() {
@@ -143,30 +152,32 @@ public class MainActivity extends AppCompatActivity {
                                     public void onClick(DialogInterface dialog, int which) {
                                         // Remove the item within array at position
                                         items.remove(pos);
-                                        prog-=5;
-                                        //progress.decreaseProgress();
+                                        //Decrease progress
+                                        progr.decreaseProgress();
                                         // Refresh the adapter
                                         itemsAdapter.notifyDataSetChanged();
-                                        // Return true consumes the long click event (marks it handled)
-                                        //writeItems();
                                     }
                                 })
                                 .create();
                         dialogDelete.show();
-
                         return true;
                     }
                 });
+        /** Called when a item is pressed **/
         lvItems.setOnItemClickListener(
                 new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, final int pos, long id) {
+                        // Open settings layout
                         launchTaskSettings(pos);
                         writeItems();
                     }
                 }
         );
     }
+    /**
+     * Method to read the task list in a text file
+     */
     private void readItems() {
         File filesDir = getFilesDir();
         File todoFile = new File(filesDir, "TodoListSave.txt");
@@ -175,10 +186,11 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             items = new ArrayList<String>();
         }
-
-
     }
 
+    /**
+     * Method to write the task list in a text file
+     */
     private void writeItems() {
         File filesDir = getFilesDir();
         File todoFile = new File(filesDir, "TodoListSave.txt");
@@ -192,32 +204,40 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onDestroy() {
-
         super.onDestroy();
         writeItems();
         getDelegate().onDestroy();
-
     }
 
+    /**
+     * Start the task setting activity
+     * @param pos position of the selectem task
+     */
     private void launchTaskSettings(int pos){
         Intent intent2 = new Intent(this, TaskSetting.class);
         Intent intent = getIntent();
+        // Gives data to the other class
         intent2.putExtra("ITEM", items.get(pos));
         intent2.putExtra("POS",pos);
         startActivityForResult(intent2,1);
 
     }
+
+    /**
+     * Start the progress layout
+     */
     private void launchProgress(){
         Intent intent2 = new Intent(this, Progress.class);
-
-        intent2.putExtra("Prog",prog);
         startActivityForResult(intent2,1);
 
     }
 
-    /*--------------------------------------------------
-    Method called when get back from the setting task
-    --------------------------------------------------*/
+    /**
+     * Method called when get back from the setting task
+     * @param requestCode
+     * @param resultCode
+     * @param intent
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent)
     {
@@ -228,11 +248,9 @@ public class MainActivity extends AppCompatActivity {
 
         if(requestCode == 1 && resultCode == RESULT_OK)
         {
-
             String taskname = intent.getStringExtra("taskname");
             pos = intent.getIntExtra("pos", -1);
             priority = intent.getIntExtra("Priority", 1);
-
 
             //HIGH PRIORITY
             if(priority == 1)
@@ -241,7 +259,6 @@ public class MainActivity extends AppCompatActivity {
                 items.add(pos, taskname);
                 priorityColor = Color.RED;
                 itemsAdapter.notifyDataSetChanged();
-
             }
             //MEDIUM PRIORITY
             else if( priority == 2)
@@ -250,7 +267,6 @@ public class MainActivity extends AppCompatActivity {
                 items.add(pos, taskname);
                 priorityColor = Color.rgb(255,165,0);
                 itemsAdapter.notifyDataSetChanged();
-
             }
 
             //LOW PRIORITY
@@ -260,7 +276,6 @@ public class MainActivity extends AppCompatActivity {
                 items.add(pos, taskname);
                 priorityColor = Color.YELLOW;
                 itemsAdapter.notifyDataSetChanged();
-
             }
 
             lvItems.getChildAt(pos).setBackgroundColor(priorityColor);
